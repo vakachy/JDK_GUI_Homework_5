@@ -46,8 +46,16 @@ class Philosopher extends Thread {
                 forkRight = Main.forks[id - 1];
 
                 if (!(forkLeft && forkRight)) {
+
                     forkLeft = true;
                     forkRight = true;
+
+                    if (id == 1) {
+                        Main.forks[Main.maxPhilosopherCount - 1] = forkLeft;
+                    } else {
+                        Main.forks[id - 2] = forkLeft;
+                    }
+                    Main.forks[id - 1] = forkRight;
                     System.out.println("Philosopher " + id + " is eating");
                     num++;
                 }
@@ -57,6 +65,13 @@ class Philosopher extends Thread {
             synchronized (Main.forks) {
                 forkLeft = false;
                 forkRight = false;
+                if (id == 1) {
+                    Main.forks[Main.maxPhilosopherCount - 1] = forkLeft;
+                } else {
+                    Main.forks[id - 2] = forkLeft;
+                }
+                Main.forks[id - 1] = forkRight;
+
             }
 
             sem.release();
