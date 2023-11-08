@@ -37,41 +37,43 @@ class Philosopher extends Thread {
         boolean forkRight;
         try {
             sem.acquire();
-            synchronized (Main.forks) {
-                if (id == 1) {
-                    forkLeft = Main.forks[Main.maxPhilosopherCount - 1];
-                } else {
-                    forkLeft = Main.forks[id - 2];
+            while (num < 3) {
+                synchronized (Main.forks) {
+                    if (id == 1) {
+                        forkLeft = Main.forks[Main.maxPhilosopherCount - 1];
+                    } else {
+                        forkLeft = Main.forks[id - 2];
+                    }
+                    forkRight = Main.forks[id - 1];
+
+                    if (!(forkLeft && forkRight)) {
+
+                        forkLeft = true;
+                        forkRight = true;
+
+                        if (id == 1) {
+                            Main.forks[Main.maxPhilosopherCount - 1] = forkLeft;
+                        } else {
+                            Main.forks[id - 2] = forkLeft;
+                        }
+                        Main.forks[id - 1] = forkRight;
+                        System.out.println("Philosopher " + id + " is eating");
+                        num++;
+                    }
                 }
-                forkRight = Main.forks[id - 1];
+                sleep(500);
 
-                if (!(forkLeft && forkRight)) {
-
-                    forkLeft = true;
-                    forkRight = true;
-
+                synchronized (Main.forks) {
+                    forkLeft = false;
+                    forkRight = false;
                     if (id == 1) {
                         Main.forks[Main.maxPhilosopherCount - 1] = forkLeft;
                     } else {
                         Main.forks[id - 2] = forkLeft;
                     }
                     Main.forks[id - 1] = forkRight;
-                    System.out.println("Philosopher " + id + " is eating");
-                    num++;
-                }
-            }
-            sleep(500);
 
-            synchronized (Main.forks) {
-                forkLeft = false;
-                forkRight = false;
-                if (id == 1) {
-                    Main.forks[Main.maxPhilosopherCount - 1] = forkLeft;
-                } else {
-                    Main.forks[id - 2] = forkLeft;
                 }
-                Main.forks[id - 1] = forkRight;
-
             }
 
             sem.release();
